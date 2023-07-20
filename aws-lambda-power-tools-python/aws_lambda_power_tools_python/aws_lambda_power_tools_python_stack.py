@@ -18,7 +18,7 @@ class AwsLambdaPowerToolsPythonStack(Stack):
             self,
             "TransactionsFunctionHandler",
             runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("functions/transactions"),
+            code=_lambda.Code.from_asset("src/transactions"),
             handler="index.handler",
             layers=[powertools_layer],
         )
