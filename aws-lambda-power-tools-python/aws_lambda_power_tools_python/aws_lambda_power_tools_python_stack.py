@@ -1,4 +1,4 @@
-from aws_cdk import Stack, aws_lambda as _lambda
+from aws_cdk import Stack, aws_lambda as _lambda, aws_apigateway as apigw
 from constructs import Construct
 
 
@@ -18,7 +18,23 @@ class AwsLambdaPowerToolsPythonStack(Stack):
             self,
             "TransactionsFunctionHandler",
             runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("lambda/transactions"),
+            code=_lambda.Code.from_asset("functions/transactions"),
             handler="index.handler",
             layers=[powertools_layer],
         )
+
+        # Create API Gateway - Lambda integration
+        api = apigw.LambdaRestApi(
+            self,
+            "FinanceAppApiLambdaIntegration",
+            handler=transaction_handler_function,
+        )
+
+        # Set up endpoints
+        transactions = api.root.add_resource("transactions")
+        transactions.add_method("GET")  # GET /transactions
+        transactions.add_method("POST")  # POST /transactions
+
+        transaction = transactions.add_resource("{transaction_id}")
+        transaction.add_method("GET")  # GET /transactions/{transaction_id}
+        transaction.add_method("DELETE")  # DELETE /transactions/{transaction_id}
