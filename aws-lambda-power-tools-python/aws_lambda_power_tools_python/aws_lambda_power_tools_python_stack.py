@@ -21,6 +21,8 @@ class AwsLambdaPowerToolsPythonStack(Stack):
             code=_lambda.Code.from_asset("src/transactions"),
             handler="index.handler",
             layers=[powertools_layer],
+            tracing=_lambda.Tracing.ACTIVE,
+            environment={"POWERTOOLS_SERVICE_NAME": "finance-api"},
         )
 
         # Create API Gateway - Lambda integration
