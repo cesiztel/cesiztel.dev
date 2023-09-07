@@ -5,6 +5,10 @@ import uuid
 from datetime import datetime
 
 
+class ItemNotFoundException(Exception):
+    """Raised when the transaction is not found."""
+
+
 class TransactionsType(Enum):
     INCOME = "income"
     EXPENSE = "expense"
@@ -40,7 +44,10 @@ class TransactionsController:
 
     def find(self, id: str):
         """Find a single transaction."""
-        raise Exception(f"Transaction with id {id} not found")
+        if id == self._fake_transaction["id"]:
+            return self._fake_transaction
+        else:
+            raise ItemNotFoundException(f"Transaction with id {id} not found")
 
     def delete(self, id: str):
         """Delete a single transaction."""

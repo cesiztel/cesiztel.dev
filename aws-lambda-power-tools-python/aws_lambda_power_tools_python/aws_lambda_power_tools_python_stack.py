@@ -32,11 +32,29 @@ class AwsLambdaPowerToolsPythonStack(Stack):
             handler=transaction_handler_function,
         )
 
+        # Create default exception model
+        exception_model = apigw.Model(
+            scope=self,
+            id="exception_model",
+            rest_api=api,
+            schema=apigw.JsonSchema(),
+        )
+
+        # Responses
+        response_list = [
+            apigw.MethodResponse(
+                status_code="404",
+                response_models={"application/json": exception_model},
+            )
+        ]
+
         # Set up endpoints
         transactions = api.root.add_resource("transactions")
         transactions.add_method("GET")  # GET /transactions
         transactions.add_method("POST")  # POST /transactions
 
         transaction = transactions.add_resource("{transaction_id}")
-        transaction.add_method("GET")  # GET /transactions/{transaction_id}
+        transaction.add_method(
+            "GET", method_responses=response_list
+        )  # GET /transactions/{transaction_id}
         transaction.add_method("DELETE")  # DELETE /transactions/{transaction_id}
