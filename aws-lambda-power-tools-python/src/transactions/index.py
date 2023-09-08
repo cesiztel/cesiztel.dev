@@ -4,7 +4,6 @@ from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.event_handler.exceptions import (
     NotFoundError,
 )
-
 from transactions_controller import TransactionsController, ItemNotFoundException
 
 tracer = Tracer()
@@ -51,7 +50,7 @@ def delete_transaction(transaction_id: str):
 
     return transactions_controller.delete(transaction_id)
 
-
+@logger.inject_lambda_context
 @tracer.capture_lambda_handler
 def handler(event: dict, context: LambdaContext):
     return app.resolve(event, context)
